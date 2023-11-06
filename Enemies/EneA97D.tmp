@@ -1,0 +1,50 @@
+[gd_scene load_steps=8 format=3 uid="uid://bnn2efdccwpn5"]
+
+[ext_resource type="Script" path="res://Scripts/EnemyScripts/Enemy.gd" id="1_vt8sr"]
+[ext_resource type="PackedScene" uid="uid://cnqcbh0n2523s" path="res://Components/DamageboxComponent.tscn" id="2_7jsvf"]
+[ext_resource type="PackedScene" uid="uid://ck8u1f1ve2ukf" path="res://Components/HitboxComponent.tscn" id="3_27lb0"]
+[ext_resource type="PackedScene" uid="uid://byvnjbsthawdg" path="res://Components/HealthComponent.tscn" id="4_1ov8a"]
+[ext_resource type="PackedScene" uid="uid://duapdqlp71tor" path="res://States/EnemyStates/StateMachine.tscn" id="5_kntvm"]
+[ext_resource type="PackedScene" uid="uid://cejvd57hkh83w" path="res://States/EnemyStates/Idle.tscn" id="6_77uoy"]
+[ext_resource type="PackedScene" uid="uid://b4ooinkcutvb0" path="res://States/EnemyStates/Follow.tscn" id="7_5mr83"]
+
+[node name="Enemy" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 18
+motion_mode = 1
+platform_floor_layers = 4294901760
+script = ExtResource("1_vt8sr")
+speed = null
+attack_damage = null
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="DamageboxComponent" parent="." instance=ExtResource("2_7jsvf")]
+collision_layer = 4
+collision_mask = 18
+
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("3_27lb0")]
+collision_layer = 4
+collision_mask = 18
+health_component = NodePath("../HealthComponent")
+
+[node name="HealthComponent" parent="." instance=ExtResource("4_1ov8a")]
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("initial_state") instance=ExtResource("5_kntvm")]
+initial_state = NodePath("Idle")
+
+[node name="Idle" parent="StateMachine" node_paths=PackedStringArray("enemy") instance=ExtResource("6_77uoy")]
+enemy = NodePath("../..")
+
+[node name="Follow" parent="StateMachine" node_paths=PackedStringArray("enemy") instance=ExtResource("7_5mr83")]
+enemy = NodePath("../..")
+
+[connection signal="area_entered" from="DamageboxComponent" to="." method="_on_damagebox_component_area_entered"]
+[connection signal="area_entered" from="HitboxComponent" to="." method="_on_hitbox_component_area_entered"]
+
+[editable path="DamageboxComponent"]
+[editable path="HitboxComponent"]

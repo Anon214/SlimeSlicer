@@ -1,0 +1,181 @@
+[gd_scene load_steps=20 format=3 uid="uid://dqoy2d4xspe1y"]
+
+[ext_resource type="Script" path="res://Scripts/EnemyScripts/Slime.gd" id="1_lcvm0"]
+[ext_resource type="Texture2D" uid="uid://i1f3bgwf3ybv" path="res://Enemies/Slime/SlimeSprite.png" id="2_00fgh"]
+[ext_resource type="PackedScene" uid="uid://cnqcbh0n2523s" path="res://Components/DamageboxComponent.tscn" id="3_5xynd"]
+[ext_resource type="Script" path="res://Scripts/ComponentScripts/KnockbackComponent.gd" id="3_nhent"]
+[ext_resource type="Script" path="res://Scripts/StateScripts/EnemyChaseState.gd" id="3_p60u8"]
+[ext_resource type="PackedScene" uid="uid://ck8u1f1ve2ukf" path="res://Components/HitboxComponent.tscn" id="4_ognt3"]
+[ext_resource type="Script" path="res://Scripts/StateScripts/FiniteStateMachine.gd" id="4_vhuvr"]
+[ext_resource type="Script" path="res://Scripts/StateScripts/EnemyWanderState.gd" id="5_57w1c"]
+[ext_resource type="PackedScene" uid="uid://pdqawgnj8xvs" path="res://Components/PlayerDetectionZone.tscn" id="5_rluln"]
+[ext_resource type="PackedScene" uid="uid://byvnjbsthawdg" path="res://Components/HealthComponent.tscn" id="10_l58uo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0q80f"]
+radius = 8.0
+
+[sub_resource type="Animation" id="Animation_8pwi8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+
+[sub_resource type="Animation" id="Animation_2e6od"]
+resource_name = "chase"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 1, 0]
+}
+
+[sub_resource type="Animation" id="Animation_ayons"]
+resource_name = "death"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_nbnws"]
+resource_name = "idle"
+loop_mode = 1
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wtlki"]
+_data = {
+"RESET": SubResource("Animation_8pwi8"),
+"chase": SubResource("Animation_2e6od"),
+"death": SubResource("Animation_ayons"),
+"idle": SubResource("Animation_nbnws")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3676p"]
+radius = 11.3137
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lreub"]
+radius = 13.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5etn0"]
+radius = 150.163
+
+[node name="BlueSlime" type="CharacterBody2D"]
+position = Vector2(0, -7)
+collision_layer = 4
+collision_mask = 18
+motion_mode = 1
+platform_floor_layers = 4294901760
+script = ExtResource("1_lcvm0")
+speed = null
+attack_damage = null
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_00fgh")
+hframes = 6
+vframes = 2
+frame = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CircleShape2D_0q80f")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_wtlki")
+}
+
+[node name="DamageboxComponent" parent="." instance=ExtResource("3_5xynd")]
+position = Vector2(-1.90735e-06, 5)
+rotation = 0.261799
+collision_layer = 4
+monitorable = false
+
+[node name="CollisionShape2D" parent="DamageboxComponent" index="0"]
+position = Vector2(-0.517636, -1.93185)
+rotation = 0.523598
+shape = SubResource("CircleShape2D_3676p")
+
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "knockback_component") instance=ExtResource("4_ognt3")]
+collision_layer = 4
+collision_mask = 2
+monitoring = false
+health_component = NodePath("../HealthComponent")
+knockback_component = NodePath("../KnockbackComponent")
+
+[node name="CollisionShape2D" parent="HitboxComponent" index="0"]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_lreub")
+
+[node name="PlayerDetectionZone" parent="." instance=ExtResource("5_rluln")]
+
+[node name="CollisionShape2D" parent="PlayerDetectionZone" index="0"]
+position = Vector2(0, 5)
+shape = SubResource("CircleShape2D_5etn0")
+debug_color = Color(0.92549, 0.239216, 0.352941, 0.12549)
+
+[node name="HealthComponent" parent="." instance=ExtResource("10_l58uo")]
+max_health = 1000.0
+
+[node name="KnockbackComponent" type="Node2D" parent="."]
+script = ExtResource("3_nhent")
+
+[node name="FiniteStateMachine" type="Node" parent="." node_paths=PackedStringArray("state")]
+script = ExtResource("4_vhuvr")
+state = NodePath("EnemyWanderState")
+
+[node name="EnemyWanderState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("enemy", "animator")]
+script = ExtResource("5_57w1c")
+enemy = NodePath("../..")
+animator = NodePath("../../AnimationPlayer")
+
+[node name="WanderTimer" type="Timer" parent="FiniteStateMachine/EnemyWanderState"]
+one_shot = true
+autostart = true
+
+[node name="EnemyChaseState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("enemy", "animator")]
+script = ExtResource("3_p60u8")
+enemy = NodePath("../..")
+animator = NodePath("../../AnimationPlayer")
+
+[connection signal="area_entered" from="DamageboxComponent" to="." method="_on_damagebox_component_area_entered" flags=18]
+[connection signal="timeout" from="FiniteStateMachine/EnemyWanderState/WanderTimer" to="FiniteStateMachine/EnemyWanderState" method="_on_wander_timer_timeout"]
+
+[editable path="DamageboxComponent"]
+[editable path="HitboxComponent"]
+[editable path="PlayerDetectionZone"]
