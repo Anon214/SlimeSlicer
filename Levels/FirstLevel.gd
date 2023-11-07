@@ -1,4 +1,4 @@
 extends Node2D
 
-func _process(delta):
-	print(Engine.get_frames_per_second())
+#func _process(delta):
+#	print("fps: ", Engine.get_frames_per_second())

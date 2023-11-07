@@ -9,8 +9,8 @@ var attack_speed: float = 0.2
 var animator: AnimationPlayer
 var friction : float = 200
 var health_switch = true
-var player: Player
 
+@onready var player: Player = get_tree().get_first_node_in_group("Player") as Player
 @onready var health : float = $HealthComponent.get_health()
 @onready var max_health: float = $HealthComponent.get_max_health()
 		
@@ -33,7 +33,6 @@ func die():
 	
 func _ready():
 	animator = get_animator()
-	player = get_parent().get_node("Player")
 	animator.play("chase")
 
 func _physics_process(delta):
@@ -53,3 +52,8 @@ func _on_damagebox_component_area_entered(area):
 		attack.attack_position = global_position
 		attack.stun_time = stun_time
 		hitbox.damage(attack)
+		
+
+func _on_hitbox_component_area_entered(area):
+	if area is HitboxComponent and area.get_parent() is Enemy:
+		print("yes collide")

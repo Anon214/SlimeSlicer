@@ -20,6 +20,7 @@ run/max_fps=144
 window/size/viewport_width=1366
 window/size/viewport_height=768
 window/stretch/mode="canvas_items"
+window/vsync/vsync_mode=0
 
 [input]
 

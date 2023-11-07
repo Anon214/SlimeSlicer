@@ -86,12 +86,12 @@ _data = {
 radius = 11.3137
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lreub"]
-radius = 13.0
+radius = 14.0
 
-[node name="BlueSlime" type="CharacterBody2D"]
+[node name="BlueSlime" type="CharacterBody2D" groups=["Enemy"]]
 position = Vector2(0, -7)
 collision_layer = 4
-collision_mask = 2
+collision_mask = 7
 motion_mode = 1
 platform_floor_layers = 4294901760
 script = ExtResource("1_lcvm0")
@@ -112,9 +112,9 @@ libraries = {
 }
 
 [node name="DamageboxComponent" parent="." instance=ExtResource("3_5xynd")]
-position = Vector2(-1.90735e-06, 5)
+position = Vector2(0, 5)
 rotation = 0.261799
-collision_layer = 4
+collision_layer = 8
 monitorable = false
 
 [node name="CollisionShape2D" parent="DamageboxComponent" index="0"]
@@ -124,8 +124,7 @@ shape = SubResource("CircleShape2D_3676p")
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "knockback_component") instance=ExtResource("4_ognt3")]
 collision_layer = 4
-collision_mask = 2
-monitoring = false
+collision_mask = 6
 health_component = NodePath("../HealthComponent")
 knockback_component = NodePath("../KnockbackComponent")
 
@@ -134,7 +133,7 @@ position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_lreub")
 
 [node name="DisableTimer" parent="HitboxComponent" index="1"]
-wait_time = 0.001
+wait_time = 0.005
 
 [node name="HealthComponent" parent="." instance=ExtResource("10_l58uo")]
 max_health = 1000.0
@@ -143,6 +142,7 @@ max_health = 1000.0
 script = ExtResource("3_nhent")
 
 [connection signal="area_entered" from="DamageboxComponent" to="." method="_on_damagebox_component_area_entered" flags=18]
+[connection signal="area_entered" from="HitboxComponent" to="." method="_on_hitbox_component_area_entered"]
 
 [editable path="DamageboxComponent"]
 [editable path="HitboxComponent"]

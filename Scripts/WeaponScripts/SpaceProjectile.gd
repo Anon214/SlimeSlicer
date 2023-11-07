@@ -35,7 +35,3 @@ func _on_damagebox_component_area_entered(area): #area = hitbox
 
 func _on_timer_timeout():
 	queue_free()
-
-
-func _on_damagebox_component_body_entered(body):
-	queue_free()
